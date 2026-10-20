@@ -81,6 +81,9 @@
   // ───────── 공용 ─────────
   const on = id => $('#' + id).classList.add('on');
   const off = id => $('#' + id).classList.remove('on');
+  // 어둠 아래에서 치우는 화면: 흐려지는 동안 어둠이 걷히면 앞 화면이 비치므로 전환 없이 바로 바꾼다
+  function snap(el, fn) { el.classList.add('snap'); fn(); void el.offsetWidth; el.classList.remove('snap'); }
+  const hide = id => { const el = $('#' + id); snap(el, () => el.classList.remove('on')); };
   const dark = (v, slow) => { const d = $('#dark'); d.classList.toggle('slow', !!slow); d.classList.toggle('on', v); };
   let tapFn = null;
   const tap = () => new Promise(r => { tapFn = r; });
@@ -99,7 +102,7 @@
     await click(b);
     SFX.init(); SFX.play('btn'); b.classList.add('pressed');
     await wait(450); dark(true, true); await wait(1700);
-    off('main');
+    hide('main');
   }
 
   // ───────── 카드 ─────────
@@ -150,7 +153,7 @@
     await ended;
     cancelAnimationFrame(raf);
   }
-  function filmOff() { off('film'); const v = video(); v.classList.remove('on'); v.pause(); $('#sub').classList.remove('on'); }
+  function filmOff() { hide('film'); const v = video(); v.classList.remove('on'); v.pause(); $('#sub').classList.remove('on'); }
 
   // ───────── 프롤로그 ─────────
   async function prologue() {
@@ -159,7 +162,7 @@
     await film(D.prologue.video, D.prologue.subs);
     on('proEnd');
     const b = $('#nextBtn'); await click(b); await press(b);
-    dark(true); await wait(1300); off('proEnd'); filmOff();
+    dark(true); await wait(1300); hide('proEnd'); filmOff();
   }
 
   // ───────── 기회(헤드의 깃털 7) ─────────
@@ -204,13 +207,13 @@
     on('hintVeil'); SFX.play('lowbell');
     const go = $('#goBtn'); await click(go); await press(go);
     dark(true); await wait(1000);
-    off('hintVeil'); off('scene'); on('hintQuiz'); dark(false);
+    hide('hintVeil'); hide('scene'); on('hintQuiz'); dark(false);
     const item = nextHintQ();
     const ok = await askOX($('#hbox'), { q: '#hq', v: '#hv', e: '#he', n: '#hn' }, item);
     if (!ok) HQ.wrong.push(item);
     await tap(); SFX.play('btn');
     dark(true); await wait(1000);
-    off('hintQuiz'); on('scene'); dark(false);
+    hide('hintQuiz'); on('scene'); dark(false);
     const back = ok ? 7 : 5;
     await wait(1000);
     for (let i = 0; i < back; i++) { lost[i] = false; renderQuills(); await wait(180); }
@@ -231,7 +234,7 @@
   function setupScene(ci) {
     const C = D.chapters[ci];
     Object.assign(S, { C, ci, got: [], buf: '', order: [], locked: [], phase: 'syn', drag: null });
-    const sc = $('#scene'); sc.classList.remove('after', 'wide', 'arrange');
+    const sc = $('#scene'); snap(sc, () => sc.classList.remove('after', 'wide', 'arrange'));
     $('#sceneBg').style.backgroundImage = `url(${IMG(C.bg)})`;
     $('#chap').textContent = C.title;
     $('#syn').textContent = C.synopsis;
@@ -410,7 +413,7 @@
     pen.style.transform += ' translate(26%,-34%) rotate(-8deg)'; pen.classList.remove('on'); curPen = null;
     await wait(1700 + 800); taphint(true);
     await tap(); taphint(false); SFX.play('btn');
-    dark(true); await wait(1300); off('ledger');
+    dark(true); await wait(1300); hide('ledger');
   }
 
   // ───────── 한 장 ─────────
@@ -423,7 +426,7 @@
     const done = new Promise(r => S.resolve = r);
     await synopsis(true);
     await done;                                   // 배열까지 맞음 → 암전
-    off('scene'); S.phase = '';
+    hide('scene'); S.phase = '';
     await film(C.video, C.subs);                  // 상영(끝 1.8초 암전은 영상 안에)
     dark(true); await wait(300); filmOff();
     await ledger(ci);
@@ -443,7 +446,7 @@
     for (const s of $$('span', P)) { s.classList.add('on'); await wait(2200); }
     await wait(800); taphint(true);
     await tap(); taphint(false); SFX.play('btn');
-    dark(true); await wait(1300); off('bridge');
+    dark(true); await wait(1300); hide('bridge');
     // 엔딩 퀴즈 5문항(기회 없음, 해설 → 탭 → 다음)
     const Q = D.quiz[LV].end;
     on('endQuiz'); dark(false);
@@ -453,7 +456,7 @@
       const th = setTimeout(() => taphint(true), 1500);
       await tap(); clearTimeout(th); taphint(false); SFX.play('btn');
     }
-    dark(true); await wait(1500); off('endQuiz');
+    dark(true); await wait(1500); hide('endQuiz');
     on('endcard'); dark(false);
     await wait(2500); $('#endcard').classList.add('btn-on');
     $('#saveBtn').addEventListener('click', () => { SFX.play('btn'); const b = $('#saveBtn'); b.classList.add('pressed'); setTimeout(() => b.classList.remove('pressed'), 400); });
