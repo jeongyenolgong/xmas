@@ -11,6 +11,8 @@
   const wait = ms => new Promise(r => setTimeout(r, ms));
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const BTN = (txt, cls = '', id = '') => `<button class="btn ${cls}"${id ? ` id="${id}"` : ''}><i></i><i></i><i></i><i></i><span>${esc(txt)}</span></button>`;
+  // 줄거리 창 힌트 구절(엑셀 씬요약문 「힌트 구절」)을 <mark>로 감싼다
+  const markHints = (text, hints) => hints.reduce((h, k) => h.replace(esc(k), `<mark>${esc(k)}</mark>`), esc(text));
   const sentences = s => s.replace(/([.?!])\s+/g, '$1\n').split('\n');   // 뒤돌아보기 정규식은 옛 iOS 사파리에서 안 돌아서 이렇게
   const COLS = 3;
   let D, T;
@@ -237,7 +239,7 @@
     const sc = $('#scene'); snap(sc, () => sc.classList.remove('after', 'wide', 'arrange'));
     $('#sceneBg').style.backgroundImage = `url(${IMG(C.bg)})`;
     $('#chap').textContent = C.title;
-    $('#syn').textContent = C.synopsis;
+    $('#syn').innerHTML = markHints(C.synopsis, C.hints || []);
     setGuide(esc(C.guideFind).replace('찾아, ', '찾아,<br>'));
     const small = esc(T['guide.code.slot']);
     $('#codes').innerHTML = C.cuts.map(() => `<div class="slot"><div class="pic"><img alt=""><div class="in"><span class="d"><i></i><i></i><i></i></span><small>${small}</small></div><div class="num"></div></div><div class="cap"></div></div>`).join('');
