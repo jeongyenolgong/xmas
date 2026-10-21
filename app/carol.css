@@ -134,7 +134,7 @@ button{font-family:inherit}
 .judge.on{opacity:1}
 .pad{display:grid;grid-template-columns:repeat(3,1fr);gap:1vmin;width:min(16vw,10.5em);flex:none}
 .pad div{position:relative;height:calc(var(--fs) * 2.2);display:flex;align-items:center;justify-content:center;border:1px solid rgba(242,194,58,.7);background:#120d0a;font-size:calc(var(--fs) * 1.1);cursor:pointer;color:var(--gold)}
-.pad div:active,.pad div.hit{filter:brightness(1.6)}
+.pad div:active{filter:brightness(1.6)}
 .pad .act{font-size:calc(var(--fs) * .66);letter-spacing:.04em}
 .pad .ok{background:var(--crimson);border-color:var(--gold)}
 .pad .ok::before{content:"";position:absolute;inset:.4vmin;border:1px solid rgba(242,194,58,.75);pointer-events:none}

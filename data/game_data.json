@@ -709,14 +709,6 @@
   ],
   "duration": 165.6
  },
- "durations": {
-  "prologue": 128.8,
-  "ch1": 56.4,
-  "ch2": 108.6,
-  "ch3": 122.4,
-  "ch4": 143.3,
-  "epilogue": 165.6
- },
  "quiz": {
   "e": {
    "end": [
