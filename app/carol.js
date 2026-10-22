@@ -38,7 +38,7 @@
 </div>
 <div class="layer card" id="coverCard"><div class="inner"><div class="bgimg"></div><div class="goldimg"></div><div class="w"><span></span></div></div></div>
 <div class="layer card" id="chCard"><div class="cbg"></div><div class="w two"><span></span></div></div>
-<div class="layer film" id="film"><div class="block"><div class="pic"><video id="video" muted playsinline webkit-playsinline preload="auto"></video></div><div class="band"><span id="sub"></span></div></div></div>
+<div class="layer film" id="film"><div class="block"><div class="pic"><video id="video" playsinline webkit-playsinline preload="auto"></video></div><div class="band"><span id="sub"></span></div></div></div>
 <div class="layer endmsg" id="proEnd"><div class="g">${esc(T['guide.prologue.end'])}</div>${BTN(T['btn.next'], '', 'nextBtn')}</div>
 <div class="layer scene" id="scene">
   <div class="bg" id="sceneBg"></div>
@@ -103,6 +103,8 @@
     const b = $('#startBtn');
     await click(b);
     SFX.init(); SFX.play('btn'); b.classList.add('pressed');
+    preload(D.prologue.video);                     // 영상에 배경 음악이 있다 — 첫 탭 안에서 한 번 재생·멈춤해 소리 나는 재생을 열어 둔다(iOS)
+    const v0 = video(); v0.play().then(() => v0.pause(), () => {}); v0.pause();
     await wait(450); dark(true, true); await wait(1700);
     hide('main');
   }
